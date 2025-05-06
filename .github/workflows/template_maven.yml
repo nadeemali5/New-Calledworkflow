@@ -38,21 +38,32 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ inputs.jdkVersionOption }}
 
-      - name: Run Maven using shell
+      - name: Run Maven build
         run: |
           echo "Running Maven goals..."
           mvn ${{ inputs.mavenOptions }} -f ${{ inputs.mavenPomFile }} ${{ inputs.goals }}
 
-      - name: Copy WAR files to artifact staging directory
+      - name: Debug target folder contents
+        if: always()
+        shell: pwsh
+        run: |
+          Write-Host "Checking contents of target/ directory..."
+          if (Test-Path -Path "target") {
+            Get-ChildItem -Path "target" -Recurse
+          } else {
+            Write-Host "No target directory found."
+          }
+
+      - name: Copy WAR files to artifact-staging
         if: always()
         shell: pwsh
         run: |
           Write-Host "Copying WAR files from 'target' to 'artifact-staging'..."
-          $sourceFiles = Get-ChildItem -Path "target" -Filter *.war -ErrorAction SilentlyContinue
-          if ($sourceFiles) {
+          $warFiles = Get-ChildItem -Path "target" -Filter *.war -ErrorAction SilentlyContinue
+          if ($warFiles) {
             New-Item -ItemType Directory -Force -Path "artifact-staging" | Out-Null
-            Copy-Item -Path $sourceFiles.FullName -Destination "artifact-staging"
-            Write-Host "WAR files copied."
+            Copy-Item -Path $warFiles.FullName -Destination "artifact-staging"
+            Write-Host "WAR files copied successfully."
           } else {
-            Write-Host "No WAR files found to copy."
+            Write-Host "No WAR files found in target/. Please check if your project is configured to package a WAR."
           }
