@@ -9,7 +9,7 @@ on:
 
 jobs:
   call-maven-workflow:
-    uses: ./.github/workflows/maven-called-workflow.yml
+    uses: ./.github/workflows/template_maven.yml
     with:
       mavenPomFile: 'pom.xml'
       goals: 'clean install'
