@@ -64,8 +64,10 @@ jobs:
             New-Item -ItemType Directory -Force -Path "artifact-staging" | Out-Null
             Copy-Item -Path $jarFiles.FullName -Destination "artifact-staging"
             Write-Host "JAR files copied successfully."
-          } else {
+          }
+          else {
             Write-Host "⚠️ No JAR files found in target/. Please verify your Maven build."
+          }
 
       - name: Upload JAR as artifact
         if: always()
