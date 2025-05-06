@@ -1,0 +1,47 @@
+name: Maven Called Workflow
+
+on:
+  workflow_call:
+    inputs:
+      mavenPomFile:      
+        required: true
+        type: string
+        default: 'pom.xml'
+      goals:
+        required: true
+        type: string
+      #options:
+      #  required: true
+      #  type: string
+      publishJUnitResults:
+        required: true
+        type: string
+      testRunTitle:
+        required: true
+        type: string
+      jdkVersionOption:
+        required: true
+        type: string
+      mavenOptions:
+        required: false
+        type: string
+        default: '-B -V'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ inputs.jdkVersionOption }}
+
+      - name: Run Maven using shell
+        run: |
+          echo "Running Maven goals..."
+          mvn ${{ inputs.mavenOptions }} ${{ inputs.options }} -f ${{ inputs.mavenPomFile }} ${{ inputs.goals }}
