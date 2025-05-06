@@ -54,16 +54,16 @@ jobs:
             Write-Host "No target directory found."
           }
 
-      - name: Copy WAR files to artifact-staging
+      - name: Copy JAR files to artifact-staging
         if: always()
         shell: pwsh
         run: |
-          Write-Host "Copying WAR files from 'target' to 'artifact-staging'..."
-          $warFiles = Get-ChildItem -Path "target" -Filter *.war -ErrorAction SilentlyContinue
-          if ($warFiles) {
+          Write-Host "Copying JAR files from 'target' to 'artifact-staging'..."
+          $jarFiles = Get-ChildItem -Path "target" -Filter *.jar -ErrorAction SilentlyContinue
+          if ($jarFiles) {
             New-Item -ItemType Directory -Force -Path "artifact-staging" | Out-Null
-            Copy-Item -Path $warFiles.FullName -Destination "artifact-staging"
-            Write-Host "WAR files copied successfully."
+            Copy-Item -Path $jarFiles.FullName -Destination "artifact-staging"
+            Write-Host "JAR files copied successfully."
           } else {
-            Write-Host "No WAR files found in target/. Please check if your project is configured to package a WAR."
+            Write-Host "⚠️ No JAR files found in target/. Please verify your Maven build."
           }
