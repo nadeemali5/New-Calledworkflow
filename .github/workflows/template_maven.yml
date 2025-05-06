@@ -1,4 +1,4 @@
-name: Maven Called Workflow
+name: Template Maven
 
 on:
   workflow_call:
