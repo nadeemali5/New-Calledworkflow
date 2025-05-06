@@ -45,7 +45,14 @@ jobs:
 
       - name: Copy WAR files to artifact staging directory
         if: always()
+        shell: pwsh
         run: |
-          echo "Copying WAR files from 'target' to 'artifact-staging'..."
-          mkdir -p artifact-staging
-          cp target/*.war artifact-staging/ 2>/dev/null || echo "No WAR files found to copy."
+          Write-Host "Copying WAR files from 'target' to 'artifact-staging'..."
+          $sourceFiles = Get-ChildItem -Path "target" -Filter *.war -ErrorAction SilentlyContinue
+          if ($sourceFiles) {
+            New-Item -ItemType Directory -Force -Path "artifact-staging" | Out-Null
+            Copy-Item -Path $sourceFiles.FullName -Destination "artifact-staging"
+            Write-Host "WAR files copied."
+          } else {
+            Write-Host "No WAR files found to copy."
+          }
