@@ -6,10 +6,19 @@ on:
       mavenPomFile:
         required: true
         type: string
+      goals:
+        required: true
+        type: string
       options:
         required: false
         type: string
+      publishJUnitResults:
+        required: false
+        type: string
       testRunTitle:
+        required: false
+        type: string
+      jdkVersionOption:
         required: false
         type: string
  
