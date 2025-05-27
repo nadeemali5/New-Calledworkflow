@@ -11,7 +11,7 @@ jobs:
     uses: ./.github/workflows/called_maven_workflow.yml
     with:
       mavenPomFile: 'pom.xml'
-      goals: 'clean install'
+      goals: 'clean package'
       #options: '--global-settings $(USERPROFILE)\.m2\settings.xml --settings local-settings.xml -Pdeployed-war -Dbuild.number=$(Build.BuildNumber) -U'
       options: ''
       publishJUnitResults: 'false'
