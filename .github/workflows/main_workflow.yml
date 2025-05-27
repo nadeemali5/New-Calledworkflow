@@ -14,6 +14,6 @@ jobs:
       mavenPomFile: 'pom.xml'
       goals: 'clean install'
       publishJUnitResults: 'false'
-      testRunTitle: 'Write title here'
+      testRunTitle: 'IBP Data Query'
       jdkVersionOption: '8'
       mavenOptions: '-B -X'
