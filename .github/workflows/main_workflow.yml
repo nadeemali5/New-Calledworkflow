@@ -10,7 +10,11 @@ jobs:
   call-called-maven-workflow:
     uses: ./.github/workflows/called_maven_workflow.yml
     with:
-      mavenPomFile: './pom.xml'
-      #options: '--settings settings.xml'
+      mavenPomFile: 'pom.xml'
+      goals: 'clean install'
+      #options: '--global-settings $(USERPROFILE)\.m2\settings.xml --settings local-settings.xml -Pdeployed-war -Dbuild.number=$(Build.BuildNumber) -U'
       options: ''
+      publishJUnitResults: 'false'
       testRunTitle: 'IBP Data Query'
+      jdkVersionOption: '8'
+
