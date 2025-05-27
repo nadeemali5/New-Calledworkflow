@@ -1,77 +1,44 @@
 name: Called Maven Workflow
-
+ 
 on:
   workflow_call:
     inputs:
-      mavenPomFile:      
+      mavenPomFile:
         required: true
         type: string
-        default: 'pom.xml'
-      goals:
-        required: true
-        type: string
-      publishJUnitResults:
-        required: true
-        type: string
-      testRunTitle:
-        required: true
-        type: string
-      jdkVersionOption:
-        required: true
-        type: string
-      mavenOptions:
+      options:
         required: false
         type: string
-        default: '-B -V'
-
+      testRunTitle:
+        required: false
+        type: string
+ 
 jobs:
-  build:
+  maven-build:
     runs-on: windows-latest
-
+ 
     steps:
-      - name: Checkout repository
+      # Checkout the repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
-
+ 
+      # Set up Java (required for Maven)
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: ${{ inputs.jdkVersionOption }}
-
-      - name: Run Maven build
-        run: |
-          echo "Running Maven goals..."
-          mvn ${{ inputs.mavenOptions }} -f ${{ inputs.mavenPomFile }} ${{ inputs.goals }}
-
-      - name: Debug target folder contents
-        if: always()
+          java-version: '8'
+          distribution: 'adopt'
+ 
+      # Run Maven commands using PowerShell
+      - name: Run Maven Build
         shell: pwsh
         run: |
-          Write-Host "Checking contents of target/ directory..."
-          if (Test-Path -Path "target") {
-            Get-ChildItem -Path "target" -Recurse
-          } else {
-            Write-Host "No target directory found."
-          }
-
-      - name: Copy JAR files to artifact-staging
-        if: always()
-        shell: pwsh
-        run: |
-          Write-Host "Copying JAR files from 'target' to 'artifact-staging'..."
-          $jarFiles = Get-ChildItem -Path "target" -Filter *.jar -ErrorAction SilentlyContinue
-          if ($jarFiles) {
-            New-Item -ItemType Directory -Force -Path "artifact-staging" | Out-Null
-            Copy-Item -Path $jarFiles.FullName -Destination "artifact-staging"
-            Write-Host "JAR files copied successfully."
-          }
-          else {
-            Write-Host "⚠️ No JAR files found in target/. Please verify your Maven build."
-          }
-
-      - name: Upload JAR as artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ github.workflow }}_${{ github.run_number }}
-          path: artifact-staging/*.jar
+          Write-Host "Starting Maven Build Process"
+          Write-Host "Using POM File: ${{ inputs.mavenPomFile }}"
+          Write-Host "Options: ${{ inputs.options }}"
+          Write-Host "Test Run Title: ${{ inputs.testRunTitle }}"
+          # Navigate to the directory containing the POM file
+          cd $(Split-Path -Path "${{ inputs.mavenPomFile }}")
+ 
+          # Run Maven command
+          mvn clean install ${{ inputs.options }}
