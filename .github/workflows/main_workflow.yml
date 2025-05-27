@@ -10,7 +10,7 @@ jobs:
   call-called-maven-workflow:
     uses: ./.github/workflows/called_maven_workflow.yml
     with:
-      mavenPomFile: 'pom.xml'
+      mavenPomFile: './pom.xml'
       #options: '--settings settings.xml'
       options: ''
       testRunTitle: 'IBP Data Query'
