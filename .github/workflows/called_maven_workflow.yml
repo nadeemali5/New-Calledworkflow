@@ -1,53 +1,60 @@
-name: Called Maven Workflow
- 
+name: Maven Reusable Workflow
+
 on:
   workflow_call:
     inputs:
       mavenPomFile:
+        description: 'Path to the Maven POM file'
         required: true
         type: string
       goals:
+        description: 'Maven goals to execute (e.g., clean install)'
         required: true
         type: string
       options:
+        description: 'Additional Maven command-line options'
         required: false
         type: string
-      publishJUnitResults:
-        required: false
-        type: string
+        default: ''
       testRunTitle:
+        description: 'Title for the test run'
         required: false
         type: string
+        default: 'Default Test Run'
       jdkVersionOption:
-        required: false
+        description: 'JDK version to use (e.g., 8, 11, 17)'
+        required: true
         type: string
- 
+
 jobs:
   maven-build:
     runs-on: windows-latest
- 
+
     steps:
       # Checkout the repository
       - name: Checkout Repository
-        uses: actions/checkout@v3
- 
-      # Set up Java (required for Maven)
+        uses: actions/checkout@v4
+
+      # Set up Java based on the input JDK version
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          java-version: '8'
+          java-version: ${{ inputs.jdkVersionOption }}
           distribution: 'adopt'
- 
+
       # Run Maven commands using PowerShell
       - name: Run Maven Build
         shell: pwsh
         run: |
           Write-Host "Starting Maven Build Process"
           Write-Host "Using POM File: ${{ inputs.mavenPomFile }}"
+          Write-Host "Goals: ${{ inputs.goals }}"
           Write-Host "Options: ${{ inputs.options }}"
           Write-Host "Test Run Title: ${{ inputs.testRunTitle }}"
+          Write-Host "JDK Version: ${{ inputs.jdkVersionOption }}"
+          
           # Navigate to the directory containing the POM file
           cd $(Split-Path -Path "${{ inputs.mavenPomFile }}")
- 
+
           # Run Maven command
-          mvn clean install ${{ inputs.options }}
+          mvn ${{ inputs.goals }} ${{ inputs.options }}
