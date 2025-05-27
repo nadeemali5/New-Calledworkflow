@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature
   workflow_dispatch:
 
 jobs:
@@ -12,8 +11,5 @@ jobs:
     uses: ./.github/workflows/called_maven_workflow.yml
     with:
       mavenPomFile: 'pom.xml'
-      goals: 'clean install'
-      publishJUnitResults: 'false'
+      options: '--settings local-settings.xml'
       testRunTitle: 'IBP Data Query'
-      jdkVersionOption: '8'
-      mavenOptions: '-B -X'
