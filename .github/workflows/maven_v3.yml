@@ -1,5 +1,5 @@
 #########################################################################
-# Workflow Name : maven
+# Workflow Name : Maven
 # Description : Build, test, and deploy with Apache Maven."
 # Version : v3
 #########################################################################
@@ -9,6 +9,10 @@ name: Maven Reusable Workflow
 on:
   workflow_call:
     inputs:
+      runsOn:
+        description: 'Specifies the runner to be used (e.g., windows-latest, ubuntu-latest)'
+        required: true
+        type: string
       mavenPomFile:
         description: 'Path to the Maven POM file'
         required: true
@@ -34,9 +38,18 @@ on:
 
 jobs:
   maven-build:
-    runs-on: windows-latest
+    runs-on: ${{ inputs.runsOn }}
 
     steps:
+      - name: Maven Task Header
+        run: |
+            # Task Header
+            Write-Host "======================================================================="
+            Write-Host "Task        : Maven"
+            Write-Host "Description : Build, test, and deploy with Apache Maven."
+            Write-Host "Version     : v3"
+            Write-Host "======================================================================="
+
       # Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
