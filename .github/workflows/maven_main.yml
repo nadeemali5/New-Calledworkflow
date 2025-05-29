@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  call-Reusable-workflow:
+  Call-Reusable-Workflow:
     uses: ./.github/workflows/maven_v3.yml
     with:
       runsOn: windows-latest
