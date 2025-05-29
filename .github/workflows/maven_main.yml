@@ -11,10 +11,6 @@ jobs:
     uses: ./.github/workflows/maven_v3.yml
     with:
       runsOn: windows-latest
-      mavenPomFile: './pom.xml'
-      goals: 'clean package'
-      #options: '--global-settings $(USERPROFILE)\.m2\settings.xml --settings local-settings.xml -Pdeployed-war -Dbuild.number=$(Build.BuildNumber) -U'
-      options: ''
-      #publishJUnitResults: 'false'
+      mavenPomFile: './pom.xml'  
+      options: '--settings settings.xml'
       testRunTitle: 'IBP Data Query'
-      jdkVersionOption: '8'
