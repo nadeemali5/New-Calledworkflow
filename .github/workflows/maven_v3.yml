@@ -1,7 +1,7 @@
 #########################################################################
 # Workflow Name : Maven
-# Description : Build, test, and deploy with Apache Maven."
-# Version : v3
+# Description   : Build, test, and deploy with Apache Maven.
+# Version       : v3
 #########################################################################
 
 name: Maven Reusable Workflow
@@ -27,27 +27,24 @@ on:
         required: false
         type: string
         default: 'Default Test Run'
-      
 
 jobs:
   maven-build:
     runs-on: ${{ inputs.runsOn }}
 
     steps:
-      
       # Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Maven Task Header
         run: |
-            # Task Header
-            Write-Host "======================================================================="
-            Write-Host "Task        : Maven"
-            Write-Host "Description : Build, test, and deploy with Apache Maven."
-            Write-Host "Version     : v3"
-            Write-Host "======================================================================="
-        
+          # Task Header
+          Write-Host "======================================================================="
+          Write-Host "Task        : Maven"
+          Write-Host "Description : Build, test, and deploy with Apache Maven."
+          Write-Host "Version     : v3"
+          Write-Host "======================================================================="
 
       # Run Maven commands using PowerShell
       - name: Run Maven Build
@@ -62,18 +59,15 @@ jobs:
         shell: pwsh
         run: |
           try {
-            #$options = ${{ inputs.options }}
-            if (-not (Test-Path -Path ${{ inputs.mavenPomFile }})) {
-              throw "POM file not found at path: ${{ inputs.mavenPomFile }}"
+            if (-not (Test-Path "${{ inputs.mavenPomFile }}")) {
+              Write-Error "Error: POM file not found at path: '${{ inputs.mavenPomFile }}'"
+              throw
             }
-            if (-not ${{ inputs.testRunTitle }}) {
-              throw "Test run title is required but not provided."
+            if ([string]::IsNullOrWhiteSpace("${{ inputs.testRunTitle }}")) {
+              Write-Error "Error: Test Run Title is empty."
+              exit 1
             }
-            #if ($options) {
-            #  Write-Host "Using options: $options"
-            #}
           } catch {
             Write-Error $_.Exception.Message
             exit 1
           }
- 
