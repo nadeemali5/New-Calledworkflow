@@ -3,16 +3,10 @@
 # Description   : Build, test, and deploy with Apache Maven.
 # Version       : v3
 #########################################################################
- 
 name: Maven Reusable Workflow
- 
 on:
   workflow_call:
     inputs:
-      runsOn:
-        description: 'Specifies the runner to be used (e.g., windows-latest, ubuntu-latest)'
-        required: true
-        type: string
       mavenPomFile:
         description: 'Path to the Maven POM file'
         required: true
@@ -27,15 +21,18 @@ on:
         required: false
         type: string
         default: 'Default Test Run'
- 
 jobs:
   maven-build:
-    runs-on: ${{ inputs.runsOn }}
- 
+    runs-on: windows-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
  
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: 'adopt'
       - name: Maven Task Header
         run: |
           Write-Host "======================================================================="
@@ -43,7 +40,6 @@ jobs:
           Write-Host "Description : Build, test, and deploy with Apache Maven."
           Write-Host "Version     : v3"
           Write-Host "======================================================================="
- 
       - name: Run Maven Debug
         shell: pwsh
         run: |
@@ -51,7 +47,6 @@ jobs:
           Write-Host "Using POM File: ${{ inputs.mavenPomFile }}"
           Write-Host "Options: ${{ inputs.options }}"
           Write-Host "Test Run Title: ${{ inputs.testRunTitle }}"
- 
       - name: Validate inputs
         shell: pwsh
         run: |
@@ -60,21 +55,16 @@ jobs:
               Write-Error "Error: POM file not found at path: '${{ inputs.mavenPomFile }}'"
               throw
             }
-            if ([string]::IsNullOrWhiteSpace("${{ inputs.testRunTitle }}")) {
-              Write-Error "Error: Test Run Title is empty."
-              exit 1
-            }
           } catch {
             Write-Error $_.Exception.Message
             exit 1
           }
- 
       - name: Build with Maven
         shell: pwsh
         run: |
           try {
             Write-Host "Executing Maven Build..."
-            & mvn -f "${{ inputs.mavenPomFile }}" ${{ inputs.options }}
+            mvn clean package
             Write-Host "Maven Build Completed Successfully."
           } catch {
             Write-Error "Maven Build Failed."
