@@ -3,9 +3,9 @@
 # Description   : Build, test, and deploy with Apache Maven.
 # Version       : v3
 #########################################################################
-
+ 
 name: Maven Reusable Workflow
-
+ 
 on:
   workflow_call:
     inputs:
@@ -27,34 +27,31 @@ on:
         required: false
         type: string
         default: 'Default Test Run'
-
+ 
 jobs:
   maven-build:
     runs-on: ${{ inputs.runsOn }}
-
+ 
     steps:
-      # Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
-
+ 
       - name: Maven Task Header
         run: |
-          # Task Header
           Write-Host "======================================================================="
           Write-Host "Task        : Maven"
           Write-Host "Description : Build, test, and deploy with Apache Maven."
           Write-Host "Version     : v3"
           Write-Host "======================================================================="
-
-      # Run Maven commands using PowerShell
-      - name: Run Maven Build
+ 
+      - name: Run Maven Debug
         shell: pwsh
         run: |
           Write-Host "Starting Maven Build Process"
           Write-Host "Using POM File: ${{ inputs.mavenPomFile }}"
           Write-Host "Options: ${{ inputs.options }}"
           Write-Host "Test Run Title: ${{ inputs.testRunTitle }}"
-
+ 
       - name: Validate inputs
         shell: pwsh
         run: |
@@ -69,5 +66,17 @@ jobs:
             }
           } catch {
             Write-Error $_.Exception.Message
+            exit 1
+          }
+ 
+      - name: Build with Maven
+        shell: pwsh
+        run: |
+          try {
+            Write-Host "Executing Maven Build..."
+            & mvn -f "${{ inputs.mavenPomFile }}" ${{ inputs.options }}
+            Write-Host "Maven Build Completed Successfully."
+          } catch {
+            Write-Error "Maven Build Failed."
             exit 1
           }
