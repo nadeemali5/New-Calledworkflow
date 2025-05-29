@@ -17,10 +17,6 @@ on:
         description: 'Path to the Maven POM file'
         required: true
         type: string
-      goals:
-        description: 'Maven goals to execute (e.g., clean install)'
-        required: true
-        type: string
       options:
         description: 'Additional Maven command-line options'
         required: false
@@ -31,10 +27,7 @@ on:
         required: false
         type: string
         default: 'Default Test Run'
-      jdkVersionOption:
-        description: 'JDK version to use (e.g., 8, 11, 17)'
-        required: true
-        type: string
+      
 
 jobs:
   maven-build:
@@ -54,26 +47,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Set up Java based on the input JDK version
-      #- name: Set up Java
-      #  uses: actions/setup-java@v4
-      #  with:
-      #    java-version: ${{ inputs.jdkVersionOption }}
-      #    distribution: 'adopt'
-
       # Run Maven commands using PowerShell
       - name: Run Maven Build
         shell: pwsh
         run: |
           Write-Host "Starting Maven Build Process"
           Write-Host "Using POM File: ${{ inputs.mavenPomFile }}"
-          Write-Host "Goals: ${{ inputs.goals }}"
           Write-Host "Options: ${{ inputs.options }}"
           Write-Host "Test Run Title: ${{ inputs.testRunTitle }}"
-          Write-Host "JDK Version: ${{ inputs.jdkVersionOption }}"
-          
-          # Navigate to the directory containing the POM file
-          cd $(Split-Path -Path "${{ inputs.mavenPomFile }}")
-
-          # Run Maven command
-          mvn ${{ inputs.goals }} ${{ inputs.options }}
