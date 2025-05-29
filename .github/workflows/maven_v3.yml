@@ -62,16 +62,16 @@ jobs:
         shell: pwsh
         run: |
           try {
-            $options = ${{ inputs.options }}
+            #$options = ${{ inputs.options }}
             if (-not (Test-Path -Path ${{ inputs.mavenPomFile }})) {
               throw "POM file not found at path: ${{ inputs.mavenPomFile }}"
             }
             if (-not ${{ inputs.testRunTitle }}) {
               throw "Test run title is required but not provided."
             }
-            if ($options) {
-              Write-Host "Using options: $options"
-            }
+            #if ($options) {
+            #  Write-Host "Using options: $options"
+            #}
           } catch {
             Write-Error $_.Exception.Message
             exit 1
