@@ -34,6 +34,11 @@ jobs:
     runs-on: ${{ inputs.runsOn }}
 
     steps:
+      
+      # Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Maven Task Header
         run: |
             # Task Header
@@ -42,10 +47,7 @@ jobs:
             Write-Host "Description : Build, test, and deploy with Apache Maven."
             Write-Host "Version     : v3"
             Write-Host "======================================================================="
-
-      # Checkout the repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+        
 
       # Run Maven commands using PowerShell
       - name: Run Maven Build
@@ -55,3 +57,19 @@ jobs:
           Write-Host "Using POM File: ${{ inputs.mavenPomFile }}"
           Write-Host "Options: ${{ inputs.options }}"
           Write-Host "Test Run Title: ${{ inputs.testRunTitle }}"
+
+      - name: Validate inputs
+        shell: pwsh
+        run: |
+          try {
+            if (-not (Test-Path -Path ${{ inputs.mavenPomFile }})) {
+              throw "POM file not found at path: ${{ inputs.mavenPomFile }}"
+            }
+            if (-not ${{ inputs.testRunTitle }}) {
+              throw "Test run title is required but not provided."
+            }
+          } catch {
+            Write-Error $_.Exception.Message
+            exit 1
+          }
+ 
