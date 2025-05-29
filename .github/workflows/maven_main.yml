@@ -1,16 +1,15 @@
 name: Main Workflow.
-
+ 
 on:
   push:
     branches:
       - main
   workflow_dispatch:
-
+ 
 jobs:
-  Call-Reusable-Workflow:
+  call-called-maven-workflow:
     uses: ./.github/workflows/maven_v3.yml
     with:
-      runsOn: windows-latest
-      mavenPomFile: './pom.xml'  
+      mavenPomFile: './pom.xml'
       options: '--settings settings.xml'
-      testRunTitle: 'IBP Data Query'
+      testRunTitle: ''
